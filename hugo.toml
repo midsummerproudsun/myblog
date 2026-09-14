@@ -1,6 +1,10 @@
 baseURL = "https://myblog.midsummerproudsun.workers.dev/"
 title = "阳光传感器"
-languageCode = "zh-cn"
+defaultContentLanguage = "zh-cn"
+
+[languages.zh-cn]
+  locale = "zh-CN"
+  languageName = "简体中文"
 
 [module]
   [[module.imports]]
