@@ -1,5 +1,5 @@
 baseURL = "https://myblog.midsummerproudsun.workers.dev/"
-title = "盛夏骄阳的博客"
+title = "阳光传感器"
 languageCode = "zh-cn"
 
 [module]
@@ -11,8 +11,8 @@ languageCode = "zh-cn"
 
 [params]
   mainpagetitle = "盛夏骄阳"
-  mainpagesubtitle = "热爱 · 学习 · 创作"
-  mainpagedesc = "发现自己，探索自己，认识自己，热爱自己。"
+  mainpagesubtitle = "日之所照·万象成集"
+  mainpagedesc = "这里是阳光传感器，一块收集日光，转化热爱的太阳能板。"
 
   copyrightname = "盛夏骄阳"
   showhugo = true
