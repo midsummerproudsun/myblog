@@ -1,0 +1,42 @@
+baseURL = "http://localhost:1313/"
+title = "盛夏骄阳的博客"
+languageCode = "zh-cn"
+
+[module]
+  [[module.imports]]
+    path = "github.com/jmfergeau/hugo.386"
+
+[pagination]
+  pagerSize = 10
+
+[params]
+  mainpagetitle = "盛夏骄阳"
+  mainpagesubtitle = "热爱 · 学习 · 创作"
+  mainpagedesc = "发现自己，探索自己，认识自己，热爱自己。"
+
+  copyrightname = "盛夏骄阳"
+  showhugo = true
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[menu]
+
+  [[menu.main]]
+    identifier = "home"
+    name = "首页"
+    url = "/"
+    weight = 10
+
+  [[menu.main]]
+    identifier = "posts"
+    name = "文章"
+    url = "/post/"
+    weight = 20
+
+  [[menu.main]]
+    identifier = "about"
+    name = "关于我"
+    url = "/about/"
+    weight = 30
