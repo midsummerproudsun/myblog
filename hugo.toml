@@ -1,4 +1,4 @@
-baseURL = "http://localhost:1313/"
+baseURL = "https://myblog.midsummerproudsun.workers.dev/"
 title = "盛夏骄阳的博客"
 languageCode = "zh-cn"
 
