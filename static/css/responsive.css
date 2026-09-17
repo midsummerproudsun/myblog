@@ -1,0 +1,170 @@
+/*
+ * Responsive layout overrides for hugo.386.
+ * Loaded after the theme's Bootstrap/style CSS.
+ */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Fluid page width: adapts to the viewport, but stops growing on very large screens. */
+.container,
+.navbar-static-top .container,
+.navbar-fixed-top .container,
+.navbar-fixed-bottom .container {
+  width: min(94vw, 1600px) !important;
+  max-width: 1600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.row-fluid {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.row-fluid .span9 { width: 74.35897435897436% !important; }
+.row-fluid .span3 { width: 23.07692307692308% !important; }
+
+img, video, canvas, svg, iframe {
+  max-width: 100%;
+}
+
+img { height: auto; }
+
+iframe[src*="bilibili"],
+iframe[src*="player.bilibili"],
+.bilibili-embed iframe {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .container,
+  .navbar-static-top .container,
+  .navbar-fixed-top .container,
+  .navbar-fixed-bottom .container {
+    width: calc(100% - 32px) !important;
+    max-width: 1100px !important;
+  }
+}
+
+/* Phones/tablets: keep the navigation visible instead of collapsing it behind the hamburger. */
+@media (max-width: 767px) {
+  .container,
+  .navbar-static-top .container,
+  .navbar-fixed-top .container,
+  .navbar-fixed-bottom .container {
+    width: calc(100% - 20px) !important;
+    max-width: none !important;
+  }
+
+  .row-fluid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .row-fluid::before,
+  .row-fluid::after {
+    display: none !important;
+  }
+
+  .row-fluid [class*="span"],
+  .row-fluid .span12,
+  .row-fluid .span11,
+  .row-fluid .span10,
+  .row-fluid .span9,
+  .row-fluid .span8,
+  .row-fluid .span7,
+  .row-fluid .span6,
+  .row-fluid .span5,
+  .row-fluid .span4,
+  .row-fluid .span3,
+  .row-fluid .span2,
+  .row-fluid .span1 {
+    float: none !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .row-fluid > [class*="span"] + [class*="span"] {
+    margin-top: 24px;
+  }
+
+  /* Override Bootstrap 2's mobile navbar collapse. */
+  .navbar .navbar-inner .container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    min-height: 44px;
+  }
+
+  .navbar .btn-navbar {
+    display: none !important;
+  }
+
+  .navbar .brand {
+    float: none !important;
+    display: block !important;
+    flex: 0 0 auto !important;
+    font-size: 18px !important;
+    line-height: 24px !important;
+    margin-right: 8px !important;
+  }
+
+  .navbar .nav-collapse.collapse,
+  .navbar .nav-collapse {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .navbar .nav-collapse .nav {
+    float: none !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    margin: 0 !important;
+  }
+
+  .navbar .nav-collapse .nav > li {
+    float: none !important;
+    display: block !important;
+  }
+
+  .navbar .nav-collapse .nav > li > a {
+    font-size: 18px !important;
+    line-height: 24px !important;
+    padding: 10px 8px !important;
+    white-space: nowrap !important;
+  }
+
+  table {
+    max-width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+
+  .page-header h1,
+  h1 {
+    overflow-wrap: anywhere;
+  }
+
+  a, p, li, td, th, blockquote {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
