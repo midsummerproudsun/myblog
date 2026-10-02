@@ -1,0 +1,18 @@
+{{- /* Base template override.
+       Upstream places partials/scripts.html AFTER </html>, which is invalid HTML
+       and forces an unstyled/unscripted flash. Moving the tag inside </body>
+       keeps `defer` semantics (deferred scripts execute in document order after
+       parsing) while validating the markup. */ -}}
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+    {{- partial "head.html" . -}}
+    <body class="{{ if .IsHome }}home{{ else }}{{ .Section | default "page" }}{{ end }}">
+        <a class="skip-link" href="#content">跳到正文</a>
+        {{- partial "header.html" . -}}
+        <div id="content" class="container">
+        {{- block "main" . }}{{- end }}
+        </div>
+        {{- partial "footer.html" . -}}
+        {{- partial "scripts.html" . -}}
+    </body>
+</html>

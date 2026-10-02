@@ -1,0 +1,60 @@
+{{- /* Homepage override.
+       Upstream emits four <h1> elements ("盛夏骄阳", "文章列表", "分类", "标签") plus
+       two stray empty <p></p> pairs. Section headings are demoted to <h2> so the
+       document keeps a single, meaningful H1. */ -}}
+{{ define "main" }}
+
+{{- /* Masthead.
+       Restrained byline treatment: no full-width colour band, the name is the
+       primary line but light (28px), the tagline supports it (22px) instead of
+       outranking it. Scoped by the `home` class so other pages keep the theme's
+       teal .page-header panel. */ -}}
+<div class="row-fluid navmargin home-masthead">
+    <div class="page-header">
+        <h1>{{ .Site.Params.mainpagetitle | default .Site.Title }}</h1>
+        {{- with .Site.Params.mainpagesubtitle }}
+        <p class="tagline">{{ . }}</p>
+        {{- end }}
+    </div>
+</div>
+
+<div class="row-fluid">
+    <div class="span9 bs-docs-sidebar">
+        {{- with .Site.Params.mainpagedesc }}
+        <p>{{ . }}</p>
+        {{- end }}
+        <hr class="soften">
+        <h2>{{ i18n "postslist" }}</h2>
+        <ul class="post-list">
+            {{- range first 10 (where .Site.RegularPages "Type" "post") }}
+            <li>
+                <a href="{{ .RelPermalink }}">
+                    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+                    <span class="post-list-title">{{ .Title }}</span>
+                </a>
+                {{- with .Description }}
+                <p class="post-list-desc">{{ . }}</p>
+                {{- else }}
+                {{- with .Summary | plainify | htmlUnescape | replaceRE `\s+` " " | trim " " }}
+                <p class="post-list-desc">{{ . | truncate 80 }}</p>
+                {{- end }}
+                {{- end }}
+            </li>
+            {{- end }}
+        </ul>
+        <p><a href="{{ "post/" | relURL }}">{{ i18n "posts" }} →</a></p>
+    </div>
+
+    <div class="span3 bs-docs-sidebar">
+        <h2>{{ i18n "categories" }}</h2>
+        <ul class="nav nav-list bs-docs-sidenav">
+            {{ partial "categories.html" . }}
+        </ul>
+        <h2>{{ i18n "tags" }}</h2>
+        <ul class="nav nav-list bs-docs-sidenav">
+            {{ partial "tags.html" . }}
+        </ul>
+    </div>
+</div>
+
+{{ end }}

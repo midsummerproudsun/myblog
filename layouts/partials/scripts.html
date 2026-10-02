@@ -1,35 +1,28 @@
-<link rel="stylesheet" href="{{ "css/bootstrap.css" | relURL }}">
-<link rel="stylesheet" href="{{ "css/bootstrap-responsive.css" | relURL }}">
-<link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
-<link rel="stylesheet" href="{{ "css/responsive.css" | relURL }}">
-{{ range .Site.Params.customCSS -}}
-<link rel="stylesheet" href="{{ . | relURL }}">
-{{- end }}
-<script src="{{ "js/jquery.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-386.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-transition.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-alert.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-modal.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-dropdown.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-scrollspy.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-tab.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-tooltip.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-popover.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-button.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-collapse.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-carousel.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-typeahead.js" | relURL }}"></script>
-<script src="{{ "js/bootstrap-affix.js" | relURL }}"></script>
-<script>
-    _386 = {
-        fastLoad:{{ .Site.Params.loadfastload }},
-        onePass:{{ .Site.Params.loadonepass }},
-        speedFactor:{{ .Site.Params.loadspeedfactor }}
-    };
-    function ThisYear() {
-        document.getElementById('thisyear').innerHTML = new Date().getFullYear();
-    };
+{{- /* Scripts partial override.
+       - CSS moved to partials/head.html (kills the unstyled-flash on every page).
+       - Loads with `defer` so parsing is never blocked; document order is
+         preserved, so jQuery still initialises before bootstrap-386.js.
+       - Drops application.js (Bootstrap's own docs demo script, which calls
+         .popover()/.tooltip()/.carousel() on selectors this site never emits).
+       - Emits real defaults for the _386 knobs; the upstream template rendered
+         literal `null` for all three because the params were unset. */ -}}
+{{- $jquery := resources.Get "js/jquery.js" | fingerprint "sha256" }}
+{{- $bs386 := resources.Get "js/bootstrap-386.js" | fingerprint "sha256" }}
+{{- $site := resources.Get "js/site.js" | minify | fingerprint "sha256" }}
+<script defer src="{{ $jquery.RelPermalink }}"></script>
+<script defer src="{{ $bs386.RelPermalink }}"></script>
+<script defer src="{{ $site.RelPermalink }}"></script>
+<script defer>
+  self._386 = self._386 || {
+    fastLoad: {{ .Site.Params.loadfastload | default false }},
+    onePass: {{ .Site.Params.loadonepass | default false }},
+    speedFactor: {{ .Site.Params.loadspeedfactor | default 1.0 }}
+  };
+  document.addEventListener('DOMContentLoaded', function () {
+    var year = document.getElementById('thisyear');
+    if (year) { year.textContent = new Date().getFullYear(); }
+  });
 </script>
 {{- range .Site.Params.customJS }}
-<script src="{{ . | relURL }}"></script>
+<script defer src="{{ . | relURL }}"></script>
 {{- end }}

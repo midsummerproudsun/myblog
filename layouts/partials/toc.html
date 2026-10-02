@@ -1,0 +1,13 @@
+{{- /* Table of contents, drawn as a DOS tree.
+       Uses .TableOfContents rather than .Fragments.Headings: in this Hugo version
+       Fragments reported only 1 heading for a page that renders 5, so counting
+       them made the TOC never appear. .TableOfContents is produced by the same
+       render pass as .Content and is therefore trustworthy.
+       Layout comes from [markup.tableOfContents] (startLevel 2 / endLevel 3). */ -}}
+{{- $toc := .TableOfContents -}}
+{{- if and $toc (ne $toc "") (gt (len $toc) 40) }}
+<div class="toc dos-box">
+  <span class="dos-box-title">目录</span>
+  {{ $toc }}
+</div>
+{{- end -}}

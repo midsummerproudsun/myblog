@@ -1,0 +1,21 @@
+{{- /* Emits the pixel CJK @font-face with a Hugo-resolved, fingerprinted URL.
+       Doing this in a template (rather than a relative url() inside a processed
+       stylesheet) is deliberate: Hugo only publishes an assets/ file when the
+       pipeline actually emits it, so a font referenced solely by a relative
+       url() from CSS would 404.
+
+       Font: Fusion Pixel Font 12px proportional, (c) TakWolf, SIL OFL-1.1.
+       Full licence shipped alongside the font at
+       /css/fonts/FusionPixelFont-LICENSE-OFL.txt — required for redistribution. */ -}}
+{{- with resources.Get "css/fonts/fusion-pixel-12px-sc.woff2" }}
+{{- $font := . | fingerprint "sha256" }}
+<style>
+@font-face {
+  font-family: 'Fusion Pixel 12px SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('{{ $font.RelPermalink }}') format('woff2');
+}
+</style>
+{{- end }}

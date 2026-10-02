@@ -1,0 +1,25 @@
+{{- /* Term page (a single category or tag): list its posts using the archive
+       tree styling so navigation language stays consistent site-wide. */ -}}
+{{ define "main" }}
+<div class="row-fluid navmargin">
+  <div class="page-header">
+    <h1>{{ .Title }}</h1>
+  </div>
+  {{- with .Content }}{{ . }}{{ end }}
+  {{- $pages := .Pages }}
+  {{- if not $pages }}
+  <p>该{{ if eq .Data.Plural "categories" }}分类{{ else }}标签{{ end }}下暂无文章。</p>
+  {{- else }}
+  <p class="dir-count">共 {{ len $pages }} 篇</p>
+  <ul class="dir-tree level-1">
+    {{- range $i, $p := $pages }}
+    <li>
+      <span class="tree-mark" aria-hidden="true">{{ if eq (add $i 1) (len $pages) }}└─{{ else }}├─{{ end }}</span>
+      <span class="dir-count">{{ $p.Date.Format "2006-01-02" }}</span>
+      <a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
+    </li>
+    {{- end }}
+  </ul>
+  {{- end }}
+</div>
+{{ end }}

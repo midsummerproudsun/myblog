@@ -3,3 +3,11 @@
 /.hugo_build.lock
 .DS_Store
 Thumbs.db
+
+# Local tool caches and artifacts (should never be committed)
+.npm-cache/
+node_modules/
+*.log
+
+# Full-tree backups made before the optimization pass
+_backup_*/

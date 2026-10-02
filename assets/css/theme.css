@@ -1,0 +1,232 @@
+/* ==========================================================================
+   DOS colour themes + design tokens
+   --------------------------------------------------------------------------
+   Every themed colour lives in CSS custom properties so a palette swap is a
+   single class change on <html>. Values here were lifted from the BOOTSTRA.386
+   CGA/EGA palette so the retro feel is preserved rather than approximated.
+   ========================================================================== */
+
+:root {
+  /* Palette-independent tokens */
+  --content-max: 48em;      /* comfortable CJK measure inside the article column */
+  --nav-h: 44px;
+  --rail-w: 7ch;            /* width of the ASCII scroll rail */
+
+  /* CRITICAL: no generic keyword (monospace / sans-serif) may appear before the
+     pixel families. A generic family terminates the CSS family list, so a stack
+     like `..., monospace, "Fusion Pixel 12px SC"` silently never requests the
+     pixel font and Han text falls back to a system face. That was a real bug. */
+  --font-pixel-latin: 'DOS', 'Fixedsys Excelsior', Monaco, Menlo, Consolas, 'Courier New';
+  --font-pixel-cjk: 'Fusion Pixel 12px SC';
+  --font-mono-cjk: 'Cascadia Mono', 'Sarasa Mono SC', 'Noto Sans Mono CJK SC',
+                   'Microsoft YaHei UI', 'Microsoft YaHei', 'PingFang SC',
+                   'Hiragino Sans GB';
+  /* Generic keywords are allowed only in these two, in final position.
+     Spelled out in full rather than composed from var() references: nested
+     custom-property substitution is still uneven across browsers, and a broken
+     substitution here would silently reintroduce the generic-keyword bug. */
+  --font-ui: 'DOS', 'Fixedsys Excelsior', Monaco, Menlo, Consolas, 'Courier New',
+             'Cascadia Mono', 'Sarasa Mono SC', 'Noto Sans Mono CJK SC',
+             'Microsoft YaHei UI', 'Microsoft YaHei', 'PingFang SC',
+             'Hiragino Sans GB', monospace;
+  --font-pixel-full: 'DOS', 'Fixedsys Excelsior', Monaco, Menlo, Consolas, 'Courier New',
+             'Fusion Pixel 12px SC',
+             'Cascadia Mono', 'Sarasa Mono SC', 'Noto Sans Mono CJK SC',
+             'Microsoft YaHei UI', 'Microsoft YaHei', 'PingFang SC',
+             'Hiragino Sans GB', monospace;
+}
+
+/* --- 1. Classic DOS blue (default) ---------------------------------------- */
+:root, [data-theme="dos"] {
+  --bg:        #000084;
+  --surface:   #00005f;
+  --ink:       #bbbbbb;
+  --ink-dim:   #888888;
+  --ink-strong:#ffffff;
+  --accent:    #fefe54;
+  --accent-ink:#000084;
+  --accent-bg: #aa5500;
+  --border:    #5555ff;
+  --border-dim:#2b2b9e;
+  --sel-bg:    #fefe54;
+  --sel-ink:   #000084;
+  --nav-bg:    #00005f;
+  --nav-ink:   #bbbbbb;
+  --nav-active-bg: #fefe54;
+  --nav-active-ink:#000084;
+  --code-bg:   #00005f;
+  --frame:     #5555ff;
+}
+
+/* --- 2. Amber monochrome ------------------------------------------------- */
+[data-theme="amber"] {
+  --bg:        #100800;
+  --surface:   #1e1000;
+  --ink:       #ffb000;
+  --ink-dim:   #a87500;
+  --ink-strong:#ffd070;
+  --accent:    #ffd070;
+  --accent-ink:#100800;
+  --accent-bg: #7a4a00;
+  --border:    #8a5a00;
+  --border-dim:#4a3000;
+  --sel-bg:    #ffb000;
+  --sel-ink:   #100800;
+  --nav-bg:    #1e1000;
+  --nav-ink:   #ffb000;
+  --nav-active-bg: #ffb000;
+  --nav-active-ink:#100800;
+  --code-bg:   #1e1000;
+  --frame:     #8a5a00;
+}
+
+/* --- 3. Green phosphor --------------------------------------------------- */
+[data-theme="green"] {
+  --bg:        #000a00;
+  --surface:   #001400;
+  --ink:       #33ff33;
+  --ink-dim:   #1f9e1f;
+  --ink-strong:#b6ffb6;
+  --accent:    #b6ffb6;
+  --accent-ink:#000a00;
+  --accent-bg: #0f6b0f;
+  --border:    #1f9e1f;
+  --border-dim:#0d4d0d;
+  --sel-bg:    #33ff33;
+  --sel-ink:   #000a00;
+  --nav-bg:    #001400;
+  --nav-ink:   #33ff33;
+  --nav-active-bg: #33ff33;
+  --nav-active-ink:#000a00;
+  --code-bg:   #001400;
+  --frame:     #1f9e1f;
+}
+
+/* --- 4. Paper / light ---------------------------------------------------- */
+[data-theme="paper"] {
+  --bg:        #f4f1e8;
+  --surface:   #ffffff;
+  --ink:       #242424;
+  --ink-dim:   #6a6a6a;
+  --ink-strong:#000000;
+  --accent:    #242424;
+  --accent-ink:#f4f1e8;
+  --accent-bg: #d8d3c4;
+  --border:    #b9b3a3;
+  --border-dim:#ddd8cc;
+  --sel-bg:    #242424;
+  --sel-ink:   #f4f1e8;
+  --nav-bg:    #ffffff;
+  --nav-ink:   #242424;
+  --nav-active-bg: #242424;
+  --nav-active-ink:#f4f1e8;
+  --code-bg:   #eae6da;
+  --frame:     #b9b3a3;
+}
+
+/* ==========================================================================
+   Global paint
+   ========================================================================== */
+
+html { background: var(--bg); }
+
+body {
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+  font-family: var(--font-ui);
+  padding-top: var(--nav-h);
+}
+
+/* Interface chrome uses the Latin pixel face plus a mono CJK fallback. */
+body,
+button,
+input,
+select,
+textarea,
+.navbar,
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-ui);
+}
+
+/* Opt-in: render Han through the Fusion Pixel bitmap face too.
+   !important is required because the plain `body` rule above and this rule both
+   target body, and the data-font rule must win regardless of source order.
+   `html` anchors on the element the bootstrap script actually sets. */
+html[data-font="pixel"] body,
+html[data-font="pixel"] button,
+html[data-font="pixel"] input,
+html[data-font="pixel"] select,
+html[data-font="pixel"] textarea,
+html[data-font="pixel"] .navbar,
+html[data-font="pixel"] h1, html[data-font="pixel"] h2, html[data-font="pixel"] h3,
+html[data-font="pixel"] h4, html[data-font="pixel"] h5, html[data-font="pixel"] h6 {
+  font-family: var(--font-pixel-full) !important;
+}
+
+a {
+  color: var(--accent) !important;
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border);
+}
+a:hover, a:focus {
+  color: var(--accent-ink) !important;
+  background: var(--accent-bg) !important;
+  border-bottom-color: transparent;
+  text-decoration: none;
+}
+
+::selection { background: var(--sel-bg); color: var(--sel-ink); }
+::-moz-selection { background: var(--sel-bg); color: var(--sel-ink); }
+
+/* Visible keyboard focus, in-theme */
+:focus-visible {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
+}
+
+/* Screen-reader-only text (visually hidden, still announced) */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link — first tab stop, reveals on focus */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 3000;
+  background: var(--accent);
+  color: var(--accent-ink) !important;
+  padding: 8px 14px;
+  border: 0;
+}
+.skip-link:focus { left: 0; }
+
+hr, hr.soften {
+  border: 0;
+  border-top: 1px dashed var(--border-dim);
+  margin: 1.8em 0;
+}
+
+/* DOS-style square scrollbar */
+* { scrollbar-color: var(--border) var(--bg); scrollbar-width: thin; }
+::-webkit-scrollbar { width: 14px; height: 14px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Images: keep bitmap art crisp — a big part of the retro illusion */
+img, canvas, video {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+img { max-width: 100%; height: auto; }

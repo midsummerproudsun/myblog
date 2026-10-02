@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 不索引自动生成的列表页，避免与文章页/首页争夺权重（可按需删除）
+Disallow: /categories/
+Disallow: /tags/
+
+Sitemap: https://myblog.midsummerproudsun.workers.dev/sitemap.xml

@@ -1,0 +1,12 @@
+{{- /* Footer copyright override.
+       The upstream partial calls {{ .Site.Params.copyright.name }} from inside a
+       `with` block whose context is the URL string, so the configured
+       `copyrightname` never rendered and the footer showed a bare "&copy;". */ -}}
+{{- with .Site.Params.copyright.prefix }}{{ . | markdownify }} | {{ end -}}
+&copy;
+{{- with .Site.Params.copyrighturl }} <a href="{{ . }}" target="_blank" rel="noopener">{{ end -}}
+{{ .Site.Params.copyrightname | default .Site.Title }}
+{{- with .Site.Params.copyrighturl }}</a>{{ end }}
+<span id="thisyear">{{ now.Year }}</span>
+{{- with .Site.Params.copyright.suffix }} | {{ . | markdownify }}{{ end -}}
+{{- if .Site.Params.showhugo }} | {{ i18n "builton" }} <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>{{ end }}

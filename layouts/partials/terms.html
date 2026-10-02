@@ -1,0 +1,28 @@
+{{- /* Term chips for a page.
+       Resolves each category/tag name against the site's taxonomy terms so the
+       href comes from Hugo's own .Permalink rather than a hand-built (and
+       fragile) urlize path. Names with no matching term are skipped. */ -}}
+{{- $page := .page -}}
+{{- $kind := .kind -}}
+{{- $names := .names -}}
+{{- $all := index $page.Site.Taxonomies $kind -}}
+{{- $items := slice -}}
+{{- range $names -}}
+  {{- $key := . -}}
+  {{- range $name, $term := $all -}}
+    {{- if or (eq $name $key) (eq ($name | urlize) ($key | urlize)) -}}
+      {{- $items = $items | append (dict "name" $name "term" $term) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if $items -}}
+{{- if eq $kind "categories" -}}
+<p class="post-meta">
+  {{- range $i, $it := $items }}{{ if $i }} · {{ end }}<a href="{{ $it.term.Page.RelPermalink }}">{{ $it.name }}</a>{{ end -}}
+</p>
+{{- else -}}
+<p class="post-tags">
+  {{- range $i, $it := $items }}<a class="label" href="{{ $it.term.Page.RelPermalink }}">{{ $it.name }}</a> {{ end -}}
+</p>
+{{- end -}}
+{{- end -}}

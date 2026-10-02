@@ -1,0 +1,29 @@
+{{- /* Table of contents, drawn as a DOS tree.
+       Usage: {{< toc >}}          — auto, from the page's own <h2>/<h3>
+              {{< toc 2 >}}        — only <h2>
+       Uses Hugo's built-in TOC parser, so heading IDs match the anchors Hugo
+       already generated. The default "## " / ">>> " heading markers line up
+       with the indent levels. */ -}}
+{{- $depth := .Get 0 | default 3 -}}
+{{- $toc := .Page.Fragments.Headings -}}
+{{- if $toc }}
+<div class="toc dos-box">
+  <span class="dos-box-title">目录</span>
+  <ul>
+    {{- range $toc }}
+    <li class="toc-l2">
+      <span class="toc-mark" aria-hidden="true">├─ </span>
+      <a href="#{{ .ID }}">{{ .Title }}</a>
+    </li>
+    {{- if ge (int $depth) 3 }}
+      {{- range .Headings }}
+      <li class="toc-l3">
+        <span class="toc-mark" aria-hidden="true">│  └─ </span>
+        <a href="#{{ .ID }}">{{ .Title }}</a>
+      </li>
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  </ul>
+</div>
+{{- end -}}

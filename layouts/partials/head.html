@@ -1,0 +1,89 @@
+{{- /* Site-wide <head> override.
+       Fixes the upstream hugo.386 head.html, which hard-codes the same <title>
+       and points every page's rel=canonical at the site root, and which ships
+       no meta description / Open Graph tags at all.
+       Also loads the DOS theme layer, the pixel CJK font, and the pre-paint
+       theme bootstrap so neither colours nor font choice flash on load. */ -}}
+{{- $pageTitle := cond .IsHome .Site.Title (printf "%s | %s" .Title .Site.Title) -}}
+{{- $siteDesc := .Site.Params.mainpagedesc | default .Site.Params.mainpagesubtitle -}}
+{{- $desc := .Description | default $siteDesc -}}
+{{- if and (not .Description) .IsPage -}}
+  {{- $desc = .Summary | plainify | htmlUnescape | replaceRE `\s+` " " | trim " " | truncate 150 -}}
+{{- end -}}
+{{- $ogImage := "" -}}
+{{- with .Params.cover }}{{ $ogImage = . | absURL }}{{ end -}}
+<head>
+    <title>{{ $pageTitle }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#000084">
+
+    <meta name="description" content="{{ $desc }}">
+    <link rel="canonical" href="{{ .Permalink }}">
+
+    <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+    <meta property="og:title" content="{{ cond .IsHome .Site.Title .Title }}">
+    <meta property="og:description" content="{{ $desc }}">
+    <meta property="og:url" content="{{ .Permalink }}">
+    <meta property="og:site_name" content="{{ .Site.Title }}">
+    <meta property="og:locale" content="{{ .Site.Language.Locale | default "zh_CN" }}">
+    {{- with $ogImage }}
+    <meta property="og:image" content="{{ . }}">
+    {{- end }}
+    {{- if .IsPage }}
+    <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+    {{- with .Lastmod }}
+    <meta property="article:modified_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+    {{- end }}
+    {{- end }}
+    <meta name="twitter:card" content="{{ cond (ne $ogImage "") "summary_large_image" "summary" }}">
+    <meta name="twitter:title" content="{{ cond .IsHome .Site.Title .Title }}">
+    <meta name="twitter:description" content="{{ $desc }}">
+    {{- with $ogImage }}
+    <meta name="twitter:image" content="{{ . }}">
+    {{- end }}
+
+    <link rel="alternate" type="application/rss+xml" href="{{ "index.xml" | absURL }}" title="{{ .Site.Title }}">
+    <link rel="alternate" type="application/atom+xml" href="{{ "index.xml" | absURL }}" title="{{ .Site.Title }}">
+
+    <link rel="icon" href="{{ "favicon.ico" | relURL }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ "favicon-32x32.png" | relURL }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ "favicon-16x16.png" | relURL }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ "apple-touch-icon.png" | relURL }}">
+
+    {{- /* Pre-paint theme + font bootstrap. Synchronous and early on purpose so
+           the palette and font never flash. */ -}}
+    {{- with resources.Get "js/theme-init.js" }}
+    <script>{{ .Content | safeJS }}</script>
+    {{- end }}
+
+    {{- with resources.Get "css/fonts/Fixedsys500c.woff" }}
+    <link rel="preload" href="{{ .RelPermalink }}" as="font" type="font/woff" crossorigin="anonymous">
+    {{- end }}
+
+    {{- /* Pixel CJK face, with a Hugo-published font URL. Must come before the
+           stylesheets so the family is known when they are parsed. */ -}}
+    {{ partial "font-face.html" . }}
+
+    {{- /* The theme's css/style.css sets `body { visibility: hidden }` and relies on
+           bootstrap-386.js to reveal it. With JavaScript disabled the page stays
+           permanently blank; the upstream <noscript> rescue is commented out. */ -}}
+    <noscript><style>body { visibility: visible !important; }</style></noscript>
+
+    {{- /* Render-blocking stylesheets MUST live in <head>. The upstream theme
+           emits them after </body>, which causes an unstyled flash on every page.
+           theme.css and typography.css load last so they win the cascade. */ -}}
+    {{- range slice "css/bootstrap.css" "css/bootstrap-responsive.css" "css/style.css" "css/responsive.css" "css/theme.css" "css/typography.css" }}
+      {{- with resources.Get . }}
+    <link rel="stylesheet" href="{{ (. | minify | fingerprint "sha256").RelPermalink }}">
+      {{- end }}
+    {{- end }}
+    {{- range .Site.Params.customCSS }}
+    <link rel="stylesheet" href="{{ . | relURL }}">
+    {{- end }}
+
+    {{- with .OutputFormats.Get "rss" }}
+    <link rel="alternate" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ $.Site.Title }}">
+    {{- end }}
+</head>

@@ -1,0 +1,44 @@
+{{- /* Archive page — a DOS file-tree instead of a flat reverse-chronological list.
+       Leaves show the day and title; directories show item counts, like DIR. */ -}}
+{{ define "main" }}
+<div class="row-fluid navmargin">
+  <div class="page-header">
+    <h1>{{ .Title }}</h1>
+  </div>
+  {{- with .Content }}{{ . }}{{ end }}
+
+  {{- $posts := where .Site.RegularPages "Type" "post" }}
+  {{- if not $posts }}
+  <p>还没有文章。</p>
+  {{- else }}
+  {{- $years := $posts.GroupByDate "2006" "desc" }}
+  <ul class="dir-tree level-1">
+    {{- range $yi, $year := $years }}
+    {{- $lastYear := eq (add $yi 1) (len $years) }}
+    <li>
+      <span class="tree-mark" aria-hidden="true">{{ if $lastYear }}└─{{ else }}├─{{ end }}</span>
+      <span class="dir-name">{{ $year.Key }}\</span>
+      <span class="dir-count">{{ len $year.Pages }} 篇</span>
+    </li>
+    {{- $months := $year.Pages.GroupByDate "01" "desc" }}
+    {{- range $mi, $month := $months }}
+    {{- $lastMonth := and $lastYear (eq (add $mi 1) (len $months)) }}
+    <li>
+      <span class="tree-mark" aria-hidden="true">{{ if $lastYear }}&nbsp;&nbsp;&nbsp;{{ else }}│&nbsp;&nbsp;{{ end }}{{ if $lastMonth }}└─{{ else }}├─{{ end }}</span>
+      <span class="dir-name">{{ $month.Key }} 月\</span>
+      <span class="dir-count">{{ len $month.Pages }} 篇</span>
+    </li>
+    {{- range $pi, $p := $month.Pages }}
+    {{- $lastPost := and $lastMonth (eq (add $pi 1) (len $month.Pages)) }}
+    <li>
+      <span class="tree-mark" aria-hidden="true">{{ if $lastYear }}&nbsp;&nbsp;&nbsp;{{ else }}│&nbsp;&nbsp;{{ end }}{{ if $lastPost }}&nbsp;&nbsp;&nbsp;{{ else }}│&nbsp;&nbsp;{{ end }}└─ </span>
+      <span class="dir-count">{{ $p.Date.Format "01-02" }}</span>
+      <a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
+    </li>
+    {{- end }}
+    {{- end }}
+    {{- end }}
+  </ul>
+  {{- end }}
+</div>
+{{ end }}

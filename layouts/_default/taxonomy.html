@@ -1,0 +1,32 @@
+{{- /* Taxonomy overview: every category / every tag, with counts, in the same
+       DIR-listing language as the archive page. Replaces the sidebar lists that
+       only ever showed the first ten terms. */ -}}
+{{ define "main" }}
+<div class="row-fluid navmargin">
+  <div class="page-header">
+    <h1>{{ .Title }}</h1>
+  </div>
+  {{- with .Content }}{{ . }}{{ end }}
+  {{- $kind := .Data.Plural }}
+  {{- if eq $kind "categories" }}
+  <p><a href="{{ "tags/" | relURL }}">→ 查看全部标签</a></p>
+  {{- else }}
+  <p><a href="{{ "categories/" | relURL }}">→ 查看全部分类</a></p>
+  {{- end }}
+
+  {{- $terms := .Data.Terms.Alphabetical }}
+  {{- if not $terms }}
+  <p>暂无内容。</p>
+  {{- else }}
+  <ul class="dir-tree level-1">
+    {{- range $i, $t := $terms }}
+    <li>
+      <span class="tree-mark" aria-hidden="true">{{ if eq (add $i 1) (len $terms) }}└─{{ else }}├─{{ end }}</span>
+      <a href="{{ $t.Page.RelPermalink }}">{{ $t.Page.LinkTitle | default $t.Name }}</a>
+      <span class="dir-count">({{ $t.Count }})</span>
+    </li>
+    {{- end }}
+  </ul>
+  {{- end }}
+</div>
+{{ end }}

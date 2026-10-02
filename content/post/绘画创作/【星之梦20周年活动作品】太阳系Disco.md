@@ -1,5 +1,7 @@
 ---
 title: "【星之梦20周年】太阳系Disco"
+slug: planetarian-20th-solar-disco
+description: "《星之梦》20周年活动投稿手书作品：太阳系Disco。"
 date: 2026-09-17
 draft: false
 categories:

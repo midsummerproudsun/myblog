@@ -18,3 +18,6 @@ other = "返回首页"
 
 [builton]
 other = "基于"
+
+[toggleNav]
+other = "切换导航菜单"

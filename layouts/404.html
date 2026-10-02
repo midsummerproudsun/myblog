@@ -1,0 +1,19 @@
+{{- /* Custom 404 page.
+       The upstream theme ships a zero-byte layouts/404.html, so Hugo generated
+       no 404.html at all and Cloudflare served its own bare error page. */ -}}
+{{ define "main" }}
+<div class="row-fluid navmargin">
+    <div class="page-header">
+        <h1>404 — 页面走丢了</h1>
+    </div>
+    <p class="lead">你要找的页面不存在，或者已经被移动到别处了。</p>
+    <p>可以试试返回 <a href="{{ .Site.Home.RelPermalink }}">首页</a>，或浏览 <a href="{{ "post/" | relURL }}">全部文章</a>。</p>
+    <hr class="soften">
+    <h2>{{ i18n "postslist" }}</h2>
+    <ul>
+        {{- range first 5 (where .Site.RegularPages "Type" "post") }}
+        <li><a href="{{ .RelPermalink }}">{{ .Date.Format "2006-01-02" }} | {{ .Title }}</a></li>
+        {{- end }}
+    </ul>
+</div>
+{{ end }}

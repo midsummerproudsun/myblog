@@ -1,5 +1,7 @@
 ---
 title: "【可塑性记忆剧情向MAD】生命来自偶然"
+slug: plastic-memories-mad
+description: "《可塑性记忆》剧情向MAD「生命来自偶然」，一部对我影响很大的作品。"
 date: 2026-09-17
 draft: false
 categories:

@@ -1,0 +1,76 @@
+{{- /* Navbar: menu + tool buttons (search / theme / font / mobile toggle),
+       plus the search overlay and theme picker popovers.
+       Accessibility: aria-label on the icon-only button, aria-current on the
+       active entry, aria-expanded on the toggles. */ -}}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="tool-btn menu-toggle" id="menu-btn"
+                    aria-label="{{ i18n "toggleNav" | default "切换导航菜单" }}"
+                    aria-expanded="false" aria-controls="site-nav-collapse">☰</button>
+            <a class="brand" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a>
+
+            <ul class="nav-tools">
+                <li>
+                    <button type="button" class="tool-btn" id="search-btn"
+                            aria-label="搜索站内文章" aria-expanded="false" aria-controls="search-overlay"
+                            title="搜索（按 / 或 Ctrl+K）">搜索</button>
+                </li>
+                <li>
+                    <button type="button" class="tool-btn" id="font-btn"
+                            aria-pressed="true" title="切换像素字体 / 系统字体">字:像素</button>
+                </li>
+                <li>
+                    <button type="button" class="tool-btn" id="theme-btn"
+                            aria-label="切换配色方案" aria-expanded="false" aria-controls="theme-menu"
+                            title="切换配色">配色</button>
+                </li>
+            </ul>
+
+            <div class="nav-collapse collapse" id="site-nav-collapse">
+                <ul class="nav">
+                    {{- $currentPage := . }}
+                    {{- range .Site.Menus.main }}
+                    {{- if .HasChildren }}
+                    <li class="dropdown{{ if $currentPage.HasMenuCurrent "main" . }} active{{ end }}">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            {{ .Pre }}<span>{{ .Name }}</span> <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {{- range .Children }}
+                            <li class="{{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">
+                                <a href="{{ .URL }}">{{ .Name }}</a>
+                            </li>
+                            {{- end }}
+                        </ul>
+                    </li>
+                    {{- else }}
+                    <li class="{{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">
+                        <a href="{{ .URL }}"{{ if $currentPage.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>
+                            {{ .Pre }}<span>{{ .Name }}</span>
+                        </a>
+                    </li>
+                    {{- end }}
+                    {{- end }}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="theme-menu" id="theme-menu" role="menu" aria-label="配色方案"></div>
+
+<div class="search-overlay" id="search-overlay" role="dialog" aria-modal="true"
+     aria-label="站内搜索" data-index-url="{{ "index.json" | relURL }}">
+    <div class="search-panel">
+        <div class="search-bar">
+            <span class="prompt" aria-hidden="true">&gt;</span>
+            <label class="sr-only" for="search-input">搜索关键词</label>
+            <input id="search-input" type="text" autocomplete="off" spellcheck="false"
+                   placeholder="输入关键词…">
+            <span class="hint">↑↓ 选择 · Enter 打开 · Esc 关闭</span>
+            <button type="button" class="tool-btn" id="search-close" aria-label="关闭搜索">×</button>
+        </div>
+        <ul class="search-results" id="search-results" aria-live="polite"></ul>
+    </div>
+</div>

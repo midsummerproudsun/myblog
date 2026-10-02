@@ -1,0 +1,53 @@
+{{- /* Single page override.
+       Upstream renders `<h1>{{ .Title }} - {{ .Date.Format "Mon, Jan 2, 2006" }}</h1>`,
+       which pollutes the page's only H1 with an English-formatted date. Here the
+       H1 carries just the title and the date is a real <time> element.
+       Also adds the reading-progress rail, an optional table of contents, and
+       printable / shareable actions. */ -}}
+{{ define "main" }}
+{{- $words := .Content | plainify | countwords -}}
+<article class="row-fluid navmargin">
+    <header class="page-header">
+        <h1>{{ .Title }}</h1>
+        <div class="post-meta">
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+            {{- if gt $words 0 }} · 约 {{ $words }} 字{{ end }}
+            {{- with .Params.categories }} · {{ end }}
+        </div>
+        {{ partial "terms.html" (dict "page" . "kind" "categories" "names" .Params.categories) }}
+    </header>
+
+    {{- with .Params.description }}
+    <p class="lead">{{ . }}</p>
+    {{- end }}
+
+    {{- /* Only offer a TOC when the article actually has headings to point at. */ -}}
+        {{- if ne .Params.toc false }}
+      {{ partial "toc.html" . }}
+    {{- end }}
+
+    <div class="post-content">
+        {{ .Content }}
+    </div>
+
+    {{ partial "terms.html" (dict "page" . "kind" "tags" "names" .Params.tags) }}
+
+    <nav class="post-nav">
+        {{- with .PrevInSection }}
+        <span class="prev">← <a href="{{ .RelPermalink }}">{{ .Title }}</a></span>
+        {{- else }}<span></span>{{ end }}
+        {{- with .NextInSection }}
+        <span class="next"><a href="{{ .RelPermalink }}">{{ .Title }}</a> →</span>
+        {{- end }}
+    </nav>
+
+    <h4><a href="{{ .Site.Home.RelPermalink }}">{{ i18n "backtohome" }}</a></h4>
+</article>
+
+{{- if gt $words 400 }}
+<div class="progress-rail" id="progress-rail" aria-hidden="true">
+  <span class="rail-fill"></span>
+  <span class="rail-pct"></span>
+</div>
+{{- end }}
+{{ end }}

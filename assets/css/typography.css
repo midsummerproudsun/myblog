@@ -1,0 +1,686 @@
+/* ==========================================================================
+   Typography, layout and retro components
+   --------------------------------------------------------------------------
+   Fixes the upstream theme's 18px/20px (1.11) leading, its flat 18px heading
+   scale, and its centred `nowrap` h2 — all of which fight CJK text.
+   The retro character comes from *pixel metrics and ASCII marks*, not from
+   cramped spacing, so nothing here costs any of the DOS feel.
+   ========================================================================== */
+
+/* ---------- 0. Pixel CJK face ------------------------------------------- */
+/* Fusion Pixel Font 12px proportional (OFL-1.1, TakWolf). The upstream theme's
+   Fixedsys face has no Han glyphs at all, so Chinese previously fell back to a
+   system serif and none of the retro feel reached the actual text.
+   The @font-face rule itself is emitted by layouts/partials/font-face.html so
+   Hugo can publish + fingerprint the font and hand us a real URL; a relative
+   url() inside this processed stylesheet would never be published. */
+
+/* ---------- 1. Vertical rhythm ------------------------------------------- */
+
+body {
+  font-size: 18px;
+  line-height: 1.75;          /* was 1.11 — the single biggest readability win */
+}
+
+p { margin: 0 0 1.1em; }
+
+/* ---------- 2. Heading hierarchy ----------------------------------------- */
+/* Upstream set h1/h2/h3 all to 18px. Sizes below are exact multiples of the
+   theme's 20px baseline grid, and of the 12px bitmap design size. */
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--ink-strong) !important;
+  font-weight: normal;
+  margin: 1.6em 0 0.7em;
+  line-height: 1.35;
+  white-space: normal;        /* upstream h2 forced nowrap and overflowed */
+}
+h1 { font-size: 36px; margin-top: 0.6em; }
+h2 { font-size: 30px; text-align: left; }
+h3 { font-size: 24px; }
+h4 { font-size: 20px; }
+h5, h6 { font-size: 18px; color: var(--ink) !important; }
+
+/* Keep the theme's ASCII markers on h3 only; h2 headings already carry their own
+   "## " prefix in the content, so a CSS-generated one would double up. */
+h1:before, h2:before { content: ""; }
+h3:before { content: ">>> "; color: var(--ink-dim); }
+
+/* The homepage h1 is decorative — let it keep the ASCII flourish. */
+.page-header h1:before { content: ""; }
+
+/* Long headings must never overflow their column. */
+h1, h2, h3, h4 { overflow-wrap: anywhere; }
+
+/* ---------- 3. Measure --------------------------------------------------- */
+/* 74.6% of a 1600px container is ~1130px, i.e. ~84 CJK glyphs per line.
+   Comfortable is 25-45. Cap the article column without touching the grid. */
+
+.post-content,
+.single .row-fluid > .page-header,
+.row-fluid > article > * {
+  max-width: var(--content-max);
+}
+
+/* Centre the article column on wide screens so the sidebar stays near it. */
+@media (min-width: 1200px) {
+  .container { width: min(94vw, 1280px) !important; }
+}
+
+/* ---------- 4. Inline decoration ---------------------------------------- */
+
+code, kbd, samp, pre {
+  font-family: var(--font-pixel-latin);
+  background: var(--code-bg);
+  border: 1px solid var(--border-dim);
+}
+code { padding: 0.1em 0.4em; font-size: 0.95em; }
+kbd {
+  padding: 0.15em 0.45em;
+  border-bottom-width: 3px;
+  color: var(--ink-strong);
+}
+
+pre {
+  padding: 0.9em 1em !important;
+  margin: 0 0 1.4em !important;
+  color: var(--ink) !important;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+pre code { background: none; border: 0; padding: 0; }
+
+blockquote {
+  margin: 0 0 1.4em;
+  padding: 0.7em 1em;
+  border-left: 4px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-dim);
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+table { border-collapse: collapse; margin: 0 0 1.4em; }
+th, td { border: 1px solid var(--border-dim); padding: 0.45em 0.7em; }
+th { background: var(--surface); color: var(--ink-strong); }
+
+ul, ol { margin: 0 0 1.2em; }
+li { margin-bottom: 0.4em; }
+li > ul, li > ol { margin-top: 0.4em; }
+
+/* ASCII rulers — the retro replacement for a plain hairline */
+hr, hr.soften {
+  border: 0;
+  border-top: 1px dashed var(--border-dim);
+  margin: 2em 0;
+}
+
+/* ---------- 5. Navbar --------------------------------------------------- */
+/* Bootstrap 2 hard-codes a GREY navbar (`.navbar-inverse .navbar-inner{background:#bbb}`
+   plus `background:#bbb` on each LINK). Overriding only `color` therefore leaves
+   grey-on-grey, which is invisible until hover. Every rule below is written with
+   an explicit hard-coded fallback inside var() so the bar stays legible even if a
+   custom property fails to resolve. */
+
+.navbar-fixed-top .navbar-inner,
+.navbar-inner {
+  background: var(--nav-bg, #00005f) !important;
+  background-image: none !important;
+  border-bottom: 2px solid var(--border, #5555ff) !important;
+  box-shadow: none !important;
+  filter: none !important;
+  min-height: var(--nav-h, 44px);
+}
+
+/* Group selectors keep specificity above Bootstrap's `.navbar-inverse ...` rules.
+   NOTE: the grey plate was NOT on the links — it was on <ul class="nav"> itself,
+   painted rgb(187,187,187) with rgb(187,187,187) text (identical colour, so the
+   menu was literally invisible until hover). Clear every container in the chain. */
+.navbar .nav,
+.navbar .nav > li,
+.navbar .nav > li > a,
+.navbar .nav > li > a:link,
+.navbar .nav > li > a:visited,
+.navbar .brand,
+.navbar .brand:link,
+.navbar .brand:visited,
+.navbar .nav-collapse,
+.navbar .nav-tools,
+.navbar .nav-tools > li {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+.navbar .brand {
+  color: var(--accent, #fefe54) !important;
+  text-shadow: none !important;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: var(--nav-h, 44px);
+  padding: 0 12px 0 0;
+  border-bottom: 0;
+}
+.navbar .brand:hover,
+.navbar .brand:focus {
+  background: var(--accent-bg, #aa5500) !important;
+  color: var(--accent-ink, #000084) !important;
+}
+
+.navbar .nav > li > a {
+  color: var(--nav-ink, #bbbbbb) !important;
+  text-shadow: none !important;
+  font-size: 18px;
+  line-height: var(--nav-h, 44px);
+  padding: 0 12px !important;
+  border-bottom: 0;
+}
+.navbar .nav > li > a:hover,
+.navbar .nav > li > a:focus {
+  background: var(--accent-bg, #aa5500) !important;
+  color: var(--accent-ink, #000084) !important;
+}
+.navbar .nav > .active > a,
+.navbar .nav > .active > a:hover,
+.navbar .nav > .active > a:focus {
+  background: var(--nav-active-bg, #fefe54) !important;
+  color: var(--nav-active-ink, #000084) !important;
+  box-shadow: none !important;
+}
+
+/* Navbar tool buttons (search / theme / font / menu) */
+.navbar .nav-tools {
+  float: right;
+  list-style: none;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: var(--nav-h);
+}
+.navbar .nav-tools > li { display: block; }
+.navbar .tool-btn {
+  background: none;
+  border: 1px solid var(--border-dim);
+  color: var(--ink) !important;
+  font-family: var(--font-pixel-latin);
+  font-size: 15px;
+  line-height: 1;
+  padding: 5px 8px;
+  margin-left: 6px;
+  cursor: pointer;
+  border-radius: 0;
+}
+.navbar .tool-btn:hover,
+.navbar .tool-btn:focus {
+  background: var(--accent-bg) !important;
+  color: var(--accent-ink) !important;
+  border-color: var(--accent);
+}
+.navbar .tool-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent) !important; }
+.navbar .menu-toggle { display: none; }
+
+/* ---------- 6. Footer --------------------------------------------------- */
+
+footer.container {
+  border-top: 0;
+  margin-top: 2.5em;
+  padding-bottom: 2.5em;
+  font-size: 16px;
+  color: var(--ink-dim);
+}
+footer a { border-bottom: 1px dotted var(--border); }
+footer p { margin-bottom: 0.5em; }
+
+/* ---------- 7. Article header / meta ------------------------------------ */
+/* The theme's teal title panel is DELIBERATE retro styling and is kept:
+     .page-header { padding:20px; margin:20px 0; background:#0aa }
+     .page-header h1 { color:#000 }                        (black on teal)
+   Only the spacing is tightened for long Chinese titles; the panel, its padding
+   and the black-on-teal contrast are left alone. */
+
+.page-header {
+  border-bottom: 0;
+}
+.page-header h1 {
+  color: #000 !important;
+  overflow-wrap: anywhere;
+}
+/* Text sitting ON the theme's teal panel must stay black like the h1 — the
+   site-wide dim grey is illegible on #0aa. (Theme intent: h1 { color:#000 }.)
+   Scoped to pages that are NOT the homepage masthead: the masthead has no teal
+   panel, and an unscoped .page-header .tagline rule outranks
+   .home-masthead .tagline, silently turning the tagline black. */
+.page-header .post-meta,
+.page-header .post-tags {
+  color: #000 !important;
+}
+body:not(.home) .page-header .tagline {
+  color: #000 !important;
+}
+.page-header .post-meta a,
+.page-header .post-tags a {
+  color: #000 !important;
+  border-bottom-color: #000;
+}
+/* The theme's other framed panels (teal hero-unit with a double white border and
+   a 4px teal glow, plus alert boxes) are intentionally left untouched. */
+.post-meta, .post-tags, .post-nav {
+  font-size: 16px;
+  color: var(--ink-dim);
+  line-height: 1.9;
+}
+
+/* ---------- 7b. Homepage masthead (restrained byline) ------------------- */
+/* User feedback: the full-width teal .page-header band behind their own name
+   read as too self-important. Chosen direction: drop the band, keep the name as
+   the primary line but light. Scoped to .home-masthead so inner pages keep the
+   theme's teal panel untouched. */
+
+.home-masthead .page-header {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-bottom: 0 !important;
+}
+.home-masthead .page-header h1 {
+  font-size: 28px;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  color: var(--accent, #fefe54) !important;
+  margin: 0 0 0.1em;
+}
+.home-masthead .tagline {
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--accent, #fefe54);   /* same gold as the name, per request */
+  margin: 0 0 0.9em;
+}
+/* The theme frames .lead in a 2px grey box; for a byline line that box is noise,
+   so the tagline is its own element and the rule below carries the separation. */
+.home-masthead + .row-fluid {
+  border-top: 1px dashed var(--border-dim, #2b2b9e);
+  padding-top: 1.2em;
+}
+
+.post-meta a, .post-tags a { border-bottom: 0; }
+.post-tags .label {
+  display: inline-block;
+  background: var(--surface) !important;
+  border: 1px solid var(--border-dim);
+  color: var(--ink) !important;
+  text-shadow: none !important;
+  padding: 1px 7px;
+  margin-right: 4px;
+}
+.post-tags .label:hover { background: var(--accent-bg) !important; color: var(--accent-ink) !important; }
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5em;
+  margin: 2em 0 1em;
+  padding-top: 1em;
+  border-top: 1px dashed var(--border-dim);
+}
+.post-nav .next { text-align: right; }
+.post-nav span { max-width: 48%; }
+
+/* ---------- 8. Boxed blocks (the retro "panel") ------------------------- */
+
+.dos-box {
+  position: relative;
+  border: 1px solid var(--frame);
+  background: var(--surface);
+  padding: 1em 1.1em;
+  margin: 0 0 1.5em;
+}
+.dos-box > .dos-box-title {
+  position: absolute;
+  top: -0.75em;
+  left: 0.8em;
+  background: var(--bg);
+  padding: 0 0.5em;
+  color: var(--ink-dim);
+  font-size: 15px;
+}
+
+/* Horizontal ASCII rule usable inline */
+.ascii-rule { color: var(--border); user-select: none; overflow: hidden; white-space: nowrap; }
+
+/* Blinking block cursor for the hero */
+.cursor::after {
+  content: "\2588";           /* █ */
+  color: var(--accent);
+  animation: dos-blink 1.06s step-end infinite;
+  margin-left: 2px;
+}
+@keyframes dos-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+/* ---------- 9. Homepage post list --------------------------------------- */
+
+.post-list { list-style: none; margin: 0 0 1.5em; padding: 0; }
+.post-list > li { margin-bottom: 1.1em; }
+.post-list > li > a {
+  display: block;
+  border-bottom: 0;
+  font-size: 19px;
+}
+.post-list time {
+  color: var(--ink-dim);
+  margin-right: 0.6em;
+  font-size: 16px;
+}
+.post-list-desc {
+  margin: 0.15em 0 0;
+  color: var(--ink-dim);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.post-list > li > a:hover { background: none !important; color: var(--accent-ink) !important; background: var(--accent-bg) !important; }
+
+/* Sidebar taxonomy lists */
+/* The theme's grey framed panel is DELIBERATE retro styling and is kept:
+     .nav-list { padding:10px 15px; margin:10px 5px; margin-left:-5px;
+                 border:2px solid #000;
+                 box-shadow:0 0 0 5px, 11px 13px 0 4px black }   (3D double shadow)
+     .nav-list > li > a { padding:0 8px; color:#000 }           (black on grey)
+     .nav-list > .active > a { color:#fff; background-color:#0aa }  (white on teal)
+   Only the link colours are re-asserted: the site-wide gold link rule was
+   turning them gold on a light-grey panel, which is far less legible than the
+   theme's original black-on-grey. The panel, border and shadows are untouched. */
+.bs-docs-sidenav a { border-bottom: 0; }
+.bs-docs-sidenav li { margin-bottom: 0.25em; }
+.bs-docs-sidenav > li > a,
+.bs-docs-sidenav .nav-list > li > a,
+.navbar .bs-docs-sidenav > li > a {
+  color: #000 !important;
+}
+.bs-docs-sidenav > li > a:hover,
+.bs-docs-sidenav > li > a:focus,
+.bs-docs-sidenav > .active > a {
+  color: #fff !important;
+  background-color: #0aa !important;
+}
+
+/* ---------- 10. Archives / taxonomy overview (DIR listing) --------------- */
+
+.dir-tree { list-style: none; margin: 0 0 1.5em; padding: 0; }
+.dir-tree li { margin: 0; line-height: 1.8; white-space: nowrap; }
+.dir-tree .tree-mark { color: var(--ink-dim); user-select: none; }
+.dir-tree .dir-name { color: var(--ink-strong); }
+.dir-tree .dir-count { color: var(--ink-dim); font-size: 15px; }
+.dir-tree.level-0 { padding-left: 0; }
+.dir-tree.level-1 { padding-left: 2ch; }
+.dir-tree.level-2 { padding-left: 4ch; }
+.dir-tree.level-3 { padding-left: 6ch; }
+
+.dir-table { width: 100%; border-collapse: collapse; }
+.dir-table td { border: 0; padding: 0.15em 0.6em 0.15em 0; vertical-align: top; }
+.dir-table td.dir-size { text-align: right; color: var(--ink-dim); white-space: nowrap; }
+
+/* ---------- 11. Reading progress rail (ASCII) --------------------------- */
+
+.progress-rail {
+  position: fixed;
+  top: var(--nav-h);
+  right: 0;
+  width: var(--rail-w);
+  height: calc(100vh - var(--nav-h));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 8px;
+  font-family: var(--font-pixel-latin);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--border-dim);
+  pointer-events: none;
+  user-select: none;
+  z-index: 900;
+  overflow: hidden;
+}
+.progress-rail .rail-fill { color: var(--accent); }
+.progress-rail .rail-pct { color: var(--ink-dim); margin-top: 6px; font-size: 11px; }
+@media (max-width: 1199px) { .progress-rail { display: none; } }
+
+/* ---------- 12. Search overlay ------------------------------------------ */
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 2000;
+  display: none;
+  padding: 10vh 4vw 4vw;
+}
+.search-overlay.is-open { display: block; }
+
+.search-panel {
+  max-width: 780px;
+  margin: 0 auto;
+  background: var(--bg);
+  border: 2px solid var(--border);
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.6em 0.9em;
+  border-bottom: 1px solid var(--border-dim);
+  font-size: 19px;
+}
+.search-bar .prompt { color: var(--accent); }
+.search-bar input {
+  flex: 1;
+  background: none;
+  border: 0;
+  outline: none;
+  color: var(--ink-strong);
+  font-family: var(--font-pixel-latin);
+  font-size: 19px;
+  caret-color: var(--accent);
+}
+.search-bar input::placeholder { color: var(--ink-dim); }
+.search-bar .hint { color: var(--ink-dim); font-size: 14px; }
+
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0.4em 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.search-results li { margin: 0; }
+.search-results a {
+  display: block;
+  padding: 0.55em 0.9em;
+  border-bottom: 0;
+  border-left: 3px solid transparent;
+}
+.search-results a:hover,
+.search-results a.is-active {
+  background: var(--accent-bg) !important;
+  color: var(--accent-ink) !important;
+  border-left-color: var(--accent);
+}
+.search-results .r-title { display: block; font-size: 18px; }
+.search-results .r-sub { display: block; font-size: 14px; color: var(--ink-dim); }
+.search-results a:hover .r-sub, .search-results a.is-active .r-sub { color: inherit; }
+.search-results .r-none { padding: 0.9em; color: var(--ink-dim); }
+.search-results mark { background: var(--accent); color: var(--accent-ink); padding: 0 2px; }
+
+/* ---------- 13. Theme picker -------------------------------------------- */
+
+.theme-menu {
+  position: absolute;
+  top: var(--nav-h);
+  right: 8px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  padding: 6px;
+  z-index: 1500;
+  display: none;
+  min-width: 168px;
+}
+.theme-menu.is-open { display: block; }
+.theme-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--ink);
+  font-family: var(--font-pixel-latin);
+  font-size: 16px;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.theme-menu button:hover { background: var(--accent-bg); color: var(--accent-ink); }
+.theme-menu button[aria-checked="true"] { border-color: var(--accent); color: var(--accent); }
+.theme-menu .swatch {
+  display: inline-block;
+  width: 10px; height: 10px;
+  margin-right: 7px;
+  border: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+/* ---------- 14. Bilibili embed (click to load) -------------------------- */
+
+.bilibili-embed {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid var(--frame);
+  margin-bottom: 1.4em;
+}
+.bilibili-embed iframe,
+.bilibili-embed .bili-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.bilibili-embed .bili-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-pixel-latin);
+  text-align: center;
+  padding: 1em;
+  border: 0;
+  margin: 0;
+}
+.bilibili-embed .bili-cover:hover { background: var(--accent-bg); color: var(--accent-ink); }
+.bilibili-embed .bili-play { font-size: 34px; line-height: 1; color: var(--accent); }
+.bilibili-embed .bili-cover:hover .bili-play { color: var(--accent-ink); }
+.bilibili-embed .bili-id { font-size: 14px; color: var(--ink-dim); }
+.bilibili-embed .bili-cover:hover .bili-id { color: inherit; }
+.bilibili-embed .bili-note { font-size: 13px; color: var(--ink-dim); }
+.bilibili-embed .bili-cover:hover .bili-note { color: inherit; }
+
+/* ---------- 15. Auto table of contents ---------------------------------- */
+/* Markup comes from Hugo's own .TableOfContents:
+   div.toc.dos-box > span.dos-box-title + nav#TableOfContents > ul > li > a */
+
+.toc {
+  border: 1px solid var(--frame);
+  background: var(--surface);
+  padding: 1.1em 1.1em 0.9em;
+  margin: 0 0 1.8em;
+}
+.toc .dos-box-title {
+  top: -0.72em;
+  left: 0.9em;
+}
+.toc nav { display: block; }
+.toc ul { list-style: none; margin: 0; padding: 0; }
+.toc li { margin: 0.2em 0; line-height: 1.6; }
+.toc li::before {
+  content: "├─ ";
+  color: var(--ink-dim);
+  user-select: none;
+}
+.toc li:last-child::before { content: "└─ "; }
+.toc ul ul { margin-left: 3ch; }
+.toc ul ul li::before { content: "│  └─ "; }
+.toc a { border-bottom: 0; }
+
+/* ---------- 16. Code copy button --------------------------------------- */
+
+.copy-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border-dim);
+  color: var(--ink-dim);
+  font-family: var(--font-pixel-latin);
+  font-size: 13px;
+  padding: 2px 7px;
+  cursor: pointer;
+  z-index: 2;
+}
+.copy-btn:hover { background: var(--accent-bg); color: var(--accent-ink); border-color: var(--accent); }
+.copy-btn.is-done { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- 17. Mobile ------------------------------------------------- */
+
+@media (max-width: 767px) {
+  body { font-size: 17px; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 24px; }
+  h3 { font-size: 21px; }
+
+  .navbar .nav-tools { height: auto; }
+  .navbar .menu-toggle { display: block; }
+
+  /* Collapse the menu behind a working toggle instead of forcing it open. */
+  .navbar .nav-collapse {
+    display: none !important;
+    flex-basis: 100%;
+    width: 100%;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .navbar .nav-collapse.is-open { display: block !important; }
+  .navbar .nav > li > a { line-height: 1.6; padding: 10px 12px !important; display: block; }
+
+  .post-nav { flex-direction: column; gap: 0.6em; }
+  .post-nav span { max-width: 100%; }
+  .post-nav .next { text-align: left; }
+
+  .dir-tree li { white-space: normal; }
+
+  .search-overlay { padding: 0; }
+  .search-panel { max-width: none; border: 0; min-height: 100vh; }
+  .search-results { max-height: none; }
+
+  /* Restore horizontal scroll for wide tables instead of overflowing */
+  .post-content table { display: block; overflow-x: auto; }
+}
+
+/* ---------- 18. Print --------------------------------------------------- */
+
+@media print {
+  .navbar, .progress-rail, .search-overlay, .theme-menu,
+  .post-nav, .copy-btn, .toc { display: none !important; }
+  body { background: #fff !important; color: #000 !important; padding-top: 0; }
+  a { color: #000 !important; border: 0; }
+  .post-content { max-width: none; }
+}
+
+/* ---------- 19. Reduced motion ------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor::after { animation: none; }
+  * { transition: none !important; }
+}

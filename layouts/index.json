@@ -1,0 +1,40 @@
+{{- /* JSON search index.
+       Built from .Summary rather than .Content: full content would bloat the
+       index several times over, while summaries plus titles and taxonomy terms
+       are plenty at this scale.
+
+       Two deliberate details:
+       - Several posts are bare {{< bilibili >}} embeds, so .Summary is empty;
+         falling back to the description (then to taxonomy terms) keeps them
+         findable instead of indexing them as blank rows.
+       - Standalone pages (about, archives) are included so "关于" / "归档" are
+         searchable too.
+       - No `now` timestamp: a func value is not JSON-serializable and makes the
+         emitted document invalid. */ -}}
+{{- $pages := where .Site.RegularPages "Type" "post" -}}
+{{- $extras := where .Site.RegularPages "Type" "page" -}}
+{{- $all := $pages | append $extras -}}
+{
+  "count": {{ len $all }},
+  "pages": [
+    {{- range $i, $p := $all }}
+    {{- if $i }},{{ end }}
+    {{- $text := $p.Summary | plainify | htmlUnescape | replaceRE `\s+` " " | trim " " -}}
+    {{- if not $text -}}
+      {{- $text = $p.Description | default "" | plainify -}}
+    {{- end -}}
+    {{- if not $text -}}
+      {{- $text = delimit (($p.Params.categories | default slice) | append ($p.Params.tags | default slice)) " " -}}
+    {{- end }}
+    {
+      "title": {{ $p.Title | jsonify }},
+      "link": {{ $p.RelPermalink | jsonify }},
+      "date": {{ $p.Date.Format "2006-01-02" | jsonify }},
+      "description": {{ ($p.Description | default "") | jsonify }},
+      "categories": {{ ($p.Params.categories | default slice) | jsonify }},
+      "tags": {{ ($p.Params.tags | default slice) | jsonify }},
+      "text": {{ $text | jsonify }}
+    }
+    {{- end }}
+  ]
+}
